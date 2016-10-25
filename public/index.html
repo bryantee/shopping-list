@@ -1,3 +1,5 @@
+<!-- index.html file including all HTML, CSS and JS supplied by Thinkful.com  -->
+
 <!doctype HTML>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -126,7 +128,7 @@ li {
 <script src="https://code.jquery.com/jquery-2.1.0.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.js"></script>
 <script>
-var ShoppingList = function() {
+var ShoppingList = function() {   // Is 'this' refering to window / global?
     this.items = [];
     this.itemList = $('.item-list');
     this.itemListTemplate = Handlebars.compile($("#item-list-template").html());
@@ -258,4 +260,3 @@ $(document).ready(function() {
     var app = new ShoppingList();
 });
 </script>
-
