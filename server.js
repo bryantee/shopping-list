@@ -72,13 +72,15 @@ app.put('/items/:id', jsonParser, function(req, res) {
   if (id != req.body.id) {
     return res.sendStatus(400);
   }
-  if (req.body.hasOwnProperty("name")) {
+  if (body.hasOwnProperty("name")) {
     itemName = req.body.name;
     storage.items.forEach(function(item, index) {
       if (item.id === id) {
         storage.items[index].name = itemName;
         idFound = true;
         res.status(200).json(storage.items[index]);
+      } else if (!body.hasOwnProperty("name")){
+        return res.sendStatus(400).send("No 'name' property found in JSON request.");
       }
     });
     if (!idFound) {
