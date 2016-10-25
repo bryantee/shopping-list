@@ -64,6 +64,9 @@ app.put('/items/:id', jsonParser, function(req, res) {
   var body = req.body;
   var itemName; // the new name
   var idFound = false;
+  if (id != req.body.id) {
+    return res.sendStatus(400);
+  }
   if (req.body.hasOwnProperty("name")) {
     itemName = req.body.name;
     storage.items.forEach(function(item, index) {
