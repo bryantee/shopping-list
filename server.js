@@ -41,18 +41,22 @@ app.post('/items', jsonParser, function(req, res) {
   console.log("Received " + itemName);
 });
 
-app.delete('/items/:id', jsonParser, function(req, res) {
-  var id = req.params.id;
-  console.log('Receied request to delete item with id of ' + id);
-  storage.items.forEach(function(item) {
-    console.log('forEach called on storage.items...');
-    console.log('item id is: ' + item.id + ' and name is: ' + item.name);
-    if (item.id == id) {  // <-- Is this a good way to deal with type coercion?
-      console.log('Found item with matching id ' + id);
-      storage.items.splice(item, 1);
+app.delete('/items/:id', function(req, res) {
+  var id = parseInt(req.params.id);
+  var idFound = false;
+  if (isNaN(id)) {
+    return res.sendStatus(400);
+  }
+  storage.items.forEach(function(item, index) {
+    if (item.id === id) {
+      storage.items.splice(index, 1);
+      idFound = true;
       res.status(200).json(item);
     }
   });
+  if (!idFound) {
+    res.sendStatus(404);
+  }
 });
 
 app.listen(3000, function() {
