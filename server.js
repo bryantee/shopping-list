@@ -109,6 +109,4 @@ app.get('/user/:username', function(req, res) {
   }
 });
 
-app.listen(3000, function() {
-  console.log('listening on port 3000');
-});
+app.listen(process.env.PORT || 8080, process.env.IP);
