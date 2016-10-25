@@ -3,8 +3,8 @@ var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 
 var Storage = {
-  add: function(name) {
-    var item = {name: name, id: this.setId};
+  add: function(name, username) {
+    var item = {name: name, id: this.setId, owner: username};
     this.items.push(item);
     this.setId += 1;
     return item;
@@ -20,9 +20,9 @@ var createStorage = function() {
 
 var storage = createStorage();
 
-storage.add('Broad beans');
-storage.add('Tomatoes');
-storage.add('Peppers');
+storage.add('Broad beans', "Bryan");
+storage.add('Tomatoes', "Bryan");
+storage.add('Peppers', "Jesse");
 
 var app = express();
 app.use(express.static('public'));
@@ -79,6 +79,24 @@ app.put('/items/:id', jsonParser, function(req, res) {
     if (!idFound) {
       res.sendStatus(400);
     }
+  }
+});
+
+app.get('/user/:username', function(req, res) {
+  var username = req.params.username.toLowerCase();
+  var userItems = [];
+  var userFound = false;
+  storage.items.forEach(function(item, index) {
+    if (item.owner.toLowerCase() === username) {
+      userItems.push(item);
+      userFound = true;
+    }
+  });
+  if (!userFound) {
+    res.status(400).send("User " + username + " not found.");
+  }
+  if (userFound) {
+    res.json(userItems);
   }
 });
 
