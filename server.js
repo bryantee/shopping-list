@@ -20,9 +20,11 @@ var createStorage = function() {
 
 var storage = createStorage();
 
-storage.add('Broad beans', "Bryan");
-storage.add('Tomatoes', "Bryan");
-storage.add('Peppers', "Jesse");
+// Sets dummy data in app
+storage.add('Broad beans', 'Bryan');
+storage.add('Tomatoes', 'Bryan');
+storage.add('Ghost Pepper Extract', 'Jesse');
+storage.add('Banana Peels', 'Jesse');
 
 var app = express();
 app.use(express.static('public'));
@@ -31,6 +33,7 @@ app.get('/items', function(request, response) {
   response.json(storage.items);
 });
 
+// Route to create new item
 app.post('/items', jsonParser, function(req, res) {
   if (!('name' in req.body)) {
     return res.sendStatus(400);
@@ -38,9 +41,10 @@ app.post('/items', jsonParser, function(req, res) {
   var itemName = req.body.name;
   var item = storage.add(itemName);
   res.status(201).json(item);
-  console.log("Received " + itemName);
 });
 
+
+// Route to delete item based on specified id
 app.delete('/items/:id', function(req, res) {
   var id = parseInt(req.params.id);
   var idFound = false;
@@ -59,10 +63,11 @@ app.delete('/items/:id', function(req, res) {
   }
 });
 
+// Route that updates item name based on specified id
 app.put('/items/:id', jsonParser, function(req, res) {
   var id = parseInt(req.params.id);
   var body = req.body;
-  var itemName; // the new name
+  var itemName;
   var idFound = false;
   if (id != req.body.id) {
     return res.sendStatus(400);
@@ -82,10 +87,12 @@ app.put('/items/:id', jsonParser, function(req, res) {
   }
 });
 
+// Route that returns json object of items owned by specified user. Currently not wired up to front end.
 app.get('/user/:username', function(req, res) {
   var username = req.params.username.toLowerCase();
   var userItems = [];
   var userFound = false;
+  // Look for items owned by user, push to userItems
   storage.items.forEach(function(item, index) {
     if (item.owner.toLowerCase() === username) {
       userItems.push(item);
