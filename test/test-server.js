@@ -76,6 +76,7 @@ describe('Shopping List', function () {
       .delete('/items/3')
       .end(function(err, res) {
         res.should.have.status(200);
+        res.should.be.json;
         res.body.should.have.property('name', 'Ghost Pepper Extract');
         res.body.should.have.property('id', 3);
         res.body.should.have.property('owner', 'Jesse');
