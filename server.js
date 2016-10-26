@@ -41,8 +41,19 @@ app.post('/items', jsonParser, function(req, res) {
   // TODO: Make username required at later date. Would break front end right now.
   var username = req.body.username;
   var itemName = req.body.name;
-  var item = storage.add(itemName, username);
-  res.status(201).json(item);
+  var duplicateId = false;
+  // check if resource already exists
+  // if so, send back status code 409
+  storage.items.forEach(function(item, index) {
+    if (item.id === req.body.id) {
+      duplicateId = true;
+      return res.status(409).send("Duplicate id found.");
+    }
+  });
+  if (!duplicateId) {
+    var item = storage.add(itemName, username);
+    res.status(201).json(item);
+  }
 });
 
 
