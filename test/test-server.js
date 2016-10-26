@@ -82,6 +82,7 @@ describe('Shopping List', function () {
         res.body.should.have.property('owner', 'Jesse');
         storage.items[2].name.should.not.equal('Ghost Pepper Extract');
         storage.items[2].id.should.not.equal(3);
+        storage.items.length.should.equal(4);
         done();
       });
   });
