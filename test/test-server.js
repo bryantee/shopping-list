@@ -71,7 +71,19 @@ describe('Shopping List', function () {
         done();
       });
   });
-  it('should delete an item on delete');
+  it('should delete an item on delete', function(done) {
+    chai.request(app)
+      .delete('/items/3')
+      .end(function(err, res) {
+        res.should.have.status(200);
+        res.body.should.have.property('name', 'Ghost Pepper Extract');
+        res.body.should.have.property('id', 3);
+        res.body.should.have.property('owner', 'Jesse');
+        storage.items[2].name.should.not.equal('Ghost Pepper Extract');
+        storage.items[2].id.should.not.equal(3);
+        done();
+      });
+  });
   it('should already existis when ID already exists on post');
   it('should get 400 when no data on post');
   it('should get 400 when not valid json data on post');
