@@ -85,7 +85,18 @@ describe('Shopping List', function () {
         done();
       });
   });
-  it('should already existis when ID already exists on post');
+  it('should get "already exists" when id already exists on POST', function(done) {
+    chai.request(app)
+      .post('/items')
+      .send({'name': 'Carrots', 'id': 2, 'username': 'Bryan'})
+      .end(function(err, res) {
+        res.should.have.status(409);
+        res.should.not.have.status(401);
+        storage.items[1].name.should.equal('Tomatoes');
+        storage.items[1].name.should.not.equal('Carrots')
+        done();
+      });
+  });
   it('should get 400 when no data on post');
   it('should get 400 when not valid json data on post');
   it('should get 400 when no valid id on put');
