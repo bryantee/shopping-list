@@ -112,3 +112,6 @@ app.get('/user/:username', function(req, res) {
 });
 
 app.listen(process.env.PORT || 8080, process.env.IP);
+
+exports.app = app;
+exports.storage = storage;
