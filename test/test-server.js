@@ -53,7 +53,24 @@ describe('Shopping List', function () {
         done();
       });
   });
-  it('should edit an item on put');
+  it('should edit an item on put', function(done) {
+    chai.request(app)
+      .put('/items/4')
+      .send({'name': 'Bananas', 'owner': 'Jesse', 'id': 4})
+      .end(function(err, res) {
+        res.should.have.status(200);
+        res.should.be.json;
+        res.body.should.be.a('object');
+        res.body.should.have.property('name', 'Bananas');
+        res.body.should.have.property('id', 4);
+        res.body.should.have.property('owner', 'Jesse');
+        storage.items[3].should.be.a('object');
+        storage.items[3].should.have.property('name', 'Bananas');
+        storage.items[3].should.have.property('id', 4);
+        storage.items[3].should.have.property('owner', 'Jesse');
+        done();
+      });
+  });
   it('should delete an item on delete');
   it('should already existis when ID already exists on post');
   it('should get 400 when no data on post');
