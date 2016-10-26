@@ -47,12 +47,13 @@ app.post('/items', jsonParser, function(req, res) {
   storage.items.forEach(function(item, index) {
     if (item.id === req.body.id) {
       duplicateId = true;
-      return res.status(409).send("Duplicate id found.");
     }
   });
   if (!duplicateId) {
     var item = storage.add(itemName, username);
     res.status(201).json(item);
+  } else {
+    res.status(409).send("Duplicate id found");
   }
 });
 
