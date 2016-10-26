@@ -38,8 +38,10 @@ app.post('/items', jsonParser, function(req, res) {
   if (!('name' in req.body)) {
     return res.sendStatus(400);
   }
+  // TODO: Make username required at later date. Would break front end right now.
+  var username = req.body.username;
   var itemName = req.body.name;
-  var item = storage.add(itemName);
+  var item = storage.add(itemName, username);
   res.status(201).json(item);
 });
 
