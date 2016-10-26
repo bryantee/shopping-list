@@ -35,8 +35,8 @@ app.get('/items', function(request, response) {
 
 // Route to create new item
 app.post('/items', jsonParser, function(req, res) {
-  if (!('name' in req.body)) {
-    return res.sendStatus(400);
+  if ((Object.keys(req.body).length = 0) || req.body.name === undefined) {
+    return res.status(400).send('Request is not a valid JSON object.');
   }
   // TODO: Make username required at later date. Would break front end right now.
   var username = req.body.username;

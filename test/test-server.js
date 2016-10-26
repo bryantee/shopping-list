@@ -99,7 +99,15 @@ describe('Shopping List', function () {
       });
   });
   it('should get 400 when no data on post');
-  it('should get 400 when not valid json data on post');
+  it('should get 400 when not valid json data on post', function(done) {
+    chai.request(app)
+      .post('/items')
+      .send('blah blah blah')
+      .end(function(err, res) {
+        res.should.have.status(400);
+        done();
+      });
+  });
   it('should get 400 when no valid id on put');
   it('should get 404 when different id in endpoint than body on put');
   it('should get 400 when no body data on put');
