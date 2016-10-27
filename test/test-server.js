@@ -108,7 +108,18 @@ describe('Shopping List', function () {
         done();
       });
   });
-  it('should get 404 when different id in endpoint than body on put');
+  it('should get 404 when different id in endpoint than body on put', function(done) {
+    chai.request(app)
+      .put('/items/3')
+      .send({'name': 'Hand Sanitizer', 'id': 2, 'owner': 'Jesse'})
+      .end(function(err, res) {
+        res.should.have.status(400);
+        storage.items[1].name.should.equal('Tomatoes');
+        storage.items[2].name.should.not.equal('Hand Sanitizer');
+        storage.items[1].name.should.not.equal('Hand Sanitizer');
+        done();
+      });
+  });
   it('should get 400 when no body data on put');
   it('should get 404 when data not in json form on put');
   it('should get 404 when id doesn\'t exist on delete');
