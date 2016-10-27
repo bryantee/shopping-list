@@ -108,7 +108,6 @@ describe('Shopping List', function () {
         done();
       });
   });
-  it('should get 400 when no valid id on put');
   it('should get 404 when different id in endpoint than body on put');
   it('should get 400 when no body data on put');
   it('should get 404 when data not in json form on put');
