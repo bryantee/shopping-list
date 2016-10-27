@@ -148,7 +148,15 @@ describe('Shopping List', function () {
         done();
       });
   });
-  it('should get 400 when no id in endoint on delete');
+  it('should get 400 when no id in endoint on delete', function(done) {
+    chai.request(app)
+      .delete('/items/')
+      .end(function(err, res) {
+        res.should.have.status(404);
+        storage.items.length.should.equal(4);
+        done();
+      });
+  });
   it('should return items for user', function(done) {
     chai.request(app)
       .get('/user/bryan')
