@@ -185,4 +185,14 @@ describe('Shopping List', function () {
         done();
       });
   });
+  it('should return 400 when no name supplied on PUT', function(done) {
+    chai.request(app)
+      .put('/items/3')
+      .send({'id': 3, 'owner': 'Bryan'})
+      .end(function(err, res) {
+        res.should.have.status(400);
+        storage.items.length.should.equal(4);
+        done();
+      });
+  });
 });

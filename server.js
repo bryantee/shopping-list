@@ -93,13 +93,13 @@ app.put('/items/:id', jsonParser, function(req, res) {
         storage.items[index].name = itemName;
         idFound = true;
         res.status(200).json(storage.items[index]);
-      } else if (!body.hasOwnProperty("name")){
-        return res.sendStatus(400).send("No 'name' property found in JSON request.");
       }
     });
-    if (!idFound) {
-      res.sendStatus(404);
-    }
+  } else if (!body.hasOwnProperty("name") || body.name.length === 0 || body.name === ""){
+    return res.status(400).send("No 'name' property found in JSON request.");
+  }
+  if (!idFound) {
+    res.sendStatus(404);
   }
 });
 
