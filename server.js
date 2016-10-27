@@ -62,7 +62,7 @@ app.post('/items', jsonParser, function(req, res) {
 app.delete('/items/:id', function(req, res) {
   var id = parseInt(req.params.id);
   var idFound = false;
-  if (isNaN(id)) {
+  if (isNaN(id) || id === undefined) {
     return res.sendStatus(400);
   }
   storage.items.forEach(function(item, index) {
