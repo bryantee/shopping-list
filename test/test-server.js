@@ -141,6 +141,14 @@ describe('Shopping List', function () {
       });
   });
   it('should get 404 when data not in json form on put');
+  it('should get 404 when id doesn\'t exist on delete', function(done) {
+    chai.request(app)
+      .delete('/items/26')
+      .end(function(err, res) {
+        res.should.have.status(404);
+        done();
+      });
+  });
   it('should get 400 when no id in endoint on delete');
   it('should return items for user', function(done) {
     chai.request(app)
