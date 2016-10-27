@@ -98,7 +98,7 @@ app.put('/items/:id', jsonParser, function(req, res) {
       }
     });
     if (!idFound) {
-      res.sendStatus(400);
+      res.sendStatus(404);
     }
   }
 });

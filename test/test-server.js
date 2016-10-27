@@ -175,4 +175,14 @@ describe('Shopping List', function () {
         done();
       });
   });
+  it('should return 404 when id doesn\'t exist on PUT', function(done) {
+    chai.request(app)
+      .put('/items/29')
+      .send({'name': 'Berries', 'id': 29, 'owner': 'Bryan'})
+      .end(function(err, res) {
+        res.should.have.status(404);
+        storage.items.length.should.equal(4);
+        done();
+      });
+  });
 });
