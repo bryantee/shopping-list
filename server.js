@@ -116,7 +116,7 @@ app.get('/user/:username', function(req, res) {
     }
   });
   if (!userFound) {
-    res.status(400).send("User " + username + " not found.");
+    res.status(404).send("User " + username + " not found.");
   }
   if (userFound) {
     res.json(userItems);
