@@ -123,4 +123,13 @@ describe('Shopping List', function () {
         done();
       });
   });
+  it('should return 404 on user not found', function(done) {
+    chai.request(app)
+      .get('/user/Mario')
+      .end(function(err, res) {
+        res.should.have.status(404);
+        res.body.should.be.empty;
+        done();
+      });
+  });
 });
