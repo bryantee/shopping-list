@@ -195,4 +195,15 @@ describe('Shopping List', function () {
         done();
       });
   });
+  it('should return 400 when invalid id supplied on delete in parameter', function(done) {
+    chai.request(app)
+      .delete('/items/LLKoolJ')
+      .send({'name': 'Gangster\'s Paradise', 'id': 4, 'owner': 'Thomas'})
+      .end(function(err, res) {
+        res.should.have.status(400);
+        storage.items[3].name.should.be.equal('Kale');
+        storage.items.length.should.be.equal(4);
+        done();
+      });
+  });
 });
