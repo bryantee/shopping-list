@@ -140,7 +140,6 @@ describe('Shopping List', function () {
         done();
       });
   });
-  it('should get 404 when data not in json form on put');
   it('should get 404 when id doesn\'t exist on delete', function(done) {
     chai.request(app)
       .delete('/items/26')
