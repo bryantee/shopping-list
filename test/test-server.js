@@ -98,7 +98,16 @@ describe('Shopping List', function () {
         done();
       });
   });
-  it('should get 400 when no data on post');
+  it('should get 400 when no data on post', function(done) {
+    chai.request(app)
+      .post('/items')
+      .send({})
+      .end(function(err, res) {
+        res.should.have.status(400);
+        storage.items.length.should.equal(4);
+        done();
+      });
+  });
   it('should get 400 when not valid json data on post', function(done) {
     chai.request(app)
       .post('/items')
