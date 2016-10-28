@@ -35,12 +35,26 @@ app.get('/items', function(request, response) {
 
 // Route to create new item
 app.post('/items', jsonParser, function(req, res) {
-  if (!('name' in req.body)) {
-    return res.sendStatus(400);
+  if ((Object.keys(req.body).length = 0) || req.body.name === undefined) {
+    return res.status(400).send('Request is not a valid JSON object.');
   }
+  // TODO: Make username required at later date. Would break front end right now.
+  var username = req.body.username;
   var itemName = req.body.name;
-  var item = storage.add(itemName);
-  res.status(201).json(item);
+  var duplicateId = false;
+  // check if resource already exists
+  // if so, send back status code 409
+  storage.items.forEach(function(item, index) {
+    if (item.id === req.body.id) {
+      duplicateId = true;
+    }
+  });
+  if (!duplicateId) {
+    var item = storage.add(itemName, username);
+    res.status(201).json(item);
+  } else {
+    res.status(409).send("Duplicate id found");
+  }
 });
 
 
@@ -48,7 +62,7 @@ app.post('/items', jsonParser, function(req, res) {
 app.delete('/items/:id', function(req, res) {
   var id = parseInt(req.params.id);
   var idFound = false;
-  if (isNaN(id)) {
+  if (isNaN(id) || id === undefined) {
     return res.sendStatus(400);
   }
   storage.items.forEach(function(item, index) {
@@ -79,13 +93,13 @@ app.put('/items/:id', jsonParser, function(req, res) {
         storage.items[index].name = itemName;
         idFound = true;
         res.status(200).json(storage.items[index]);
-      } else if (!body.hasOwnProperty("name")){
-        return res.sendStatus(400).send("No 'name' property found in JSON request.");
       }
     });
-    if (!idFound) {
-      res.sendStatus(400);
-    }
+  } else if (!body.hasOwnProperty("name") || body.name.length === 0 || body.name === ""){
+    return res.status(400).send("No 'name' property found in JSON request.");
+  }
+  if (!idFound) {
+    res.sendStatus(404);
   }
 });
 
@@ -102,7 +116,7 @@ app.get('/user/:username', function(req, res) {
     }
   });
   if (!userFound) {
-    res.status(400).send("User " + username + " not found.");
+    res.status(404).send("User " + username + " not found.");
   }
   if (userFound) {
     res.json(userItems);
@@ -110,3 +124,6 @@ app.get('/user/:username', function(req, res) {
 });
 
 app.listen(process.env.PORT || 8080, process.env.IP);
+
+exports.app = app;
+exports.storage = storage;
