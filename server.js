@@ -1,129 +1,135 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
-var Storage = {
-  add: function(name, username) {
-    var item = {name: name, id: this.setId, owner: username};
-    this.items.push(item);
-    this.setId += 1;
-    return item;
-  }
-};
+// config for database url and port parameters
+const config = require('./config');
 
-var createStorage = function() {
-  var storage = Object.create(Storage);
-  storage.items = [];
-  storage.setId = 1;
-  return storage;
-}
+const app = express();
 
-var storage = createStorage();
-
-// Sets dummy data in app
-storage.add('Broad beans', 'Bryan');
-storage.add('Tomatoes', 'Bryan');
-storage.add('Ghost Pepper Extract', 'Jesse');
-storage.add('Banana Peels', 'Jesse');
-
-var app = express();
+app.use((bodyParser.json()));
 app.use(express.static('public'));
 
-app.get('/items', function(request, response) {
-  response.json(storage.items);
+// model / schema for shopping list item
+const Item = require('./models/item');
+
+// GET endpoint consumed by jquery during initial page load
+// and each create / read / update / delete
+// Returns all shoppping list items in db on call
+app.get('/items', function(req, res) {
+  Item.find(function(err, items) {
+    if (err) {
+      return res.status(500).json({
+        message: 'Internal Server Error'
+      });
+    }
+    res.status(200).json(items);
+  });
 });
 
-// Route to create new item
-app.post('/items', jsonParser, function(req, res) {
-  if ((Object.keys(req.body).length = 0) || req.body.name === undefined) {
-    return res.status(400).send('Request is not a valid JSON object.');
-  }
-  // TODO: Make username required at later date. Would break front end right now.
-  var username = req.body.username;
-  var itemName = req.body.name;
-  var duplicateId = false;
-  // check if resource already exists
-  // if so, send back status code 409
-  storage.items.forEach(function(item, index) {
-    if (item.id === req.body.id) {
-      duplicateId = true;
+// POST endpoint for creating a specific item
+// Takes JSON object with "name" property
+// MongoDB handles id creation
+app.post('/items', function(req, res) {
+  Item.create({
+    name: req.body.name
+  }, function(err, item) {
+    if (err) {
+      return res.status(500).json({
+        message: 'Internal Server Error'
+      });
     }
-  });
-  if (!duplicateId) {
-    var item = storage.add(itemName, username);
     res.status(201).json(item);
-  } else {
-    res.status(409).send("Duplicate id found");
+  });
+});
+
+// PUT endpoint for updating item
+// Takes valid id in url param and JSON object with new name as "name" property
+app.put('/items/:id', function(req, res) {
+  let id = req.params.id;
+  let newName = req.body.name;
+
+  let query = {
+    _id: id
+  };
+
+  let update = {
+    $set: {
+      name: newName
+    }
   }
+
+  Item.findOneAndUpdate(query, update, function(err, result) {
+    console.log(result);
+    if (!result) {
+      console.log('Bad id:', id);
+      return res.status(400).send('Bad id: ' + id);
+    } else if (err) {
+      console.log('Error:', err);
+      return res.status(500).send('Error: ' + err);
+    }
+    console.log(result.name);
+    res.status(200).json({
+      message: 'Received ' + newName
+    });
+  });
 });
 
 
-// Route to delete item based on specified id
+// DELETE endpoint to delete item in db
+// Takes valid item id
+// returns JSON of item deleted
 app.delete('/items/:id', function(req, res) {
-  var id = parseInt(req.params.id);
-  var idFound = false;
-  if (isNaN(id) || id === undefined) {
-    return res.sendStatus(400);
-  }
-  storage.items.forEach(function(item, index) {
-    if (item.id === id) {
-      storage.items.splice(index, 1);
-      idFound = true;
-      res.status(200).json(item);
+  let id = req.params.id;
+
+  let query = {
+    _id: id
+  };
+
+  Item.findOneAndRemove(query, function(err, result) {
+    if (!result) {
+      console.log('Bad id:', id);
+      return res.status(400).send('Bad id: ' + id);
+    } else if (err) {
+      console.log('Error:', err);
+      return res.status(500).send('Error: ' + err);
+    } else {
+      res.status(200).json(result);
     }
   });
-  if (!idFound) {
-    res.sendStatus(404);
-  }
 });
 
-// Route that updates item name based on specified id
-app.put('/items/:id', jsonParser, function(req, res) {
-  var id = parseInt(req.params.id);
-  var body = req.body;
-  var itemName;
-  var idFound = false;
-  if (id != req.body.id) {
-    return res.sendStatus(400);
-  }
-  if (body.hasOwnProperty("name")) {
-    itemName = req.body.name;
-    storage.items.forEach(function(item, index) {
-      if (item.id === id) {
-        storage.items[index].name = itemName;
-        idFound = true;
-        res.status(200).json(storage.items[index]);
+// Route for any invalid endpoint attempts
+app.use('*', function(req, res) {
+  res.status(404).json({
+    message: 'Not found'
+  });
+});
+
+// Start up the server, uses params from config file
+const runServer = function(callback) {
+  mongoose.connect(config.DATABASE_URL, function(err) {
+    if (err && callback) {
+      return callback(err);
+    }
+    app.listen(config.PORT, function() {
+      console.log('Listening on localhost:' + config.PORT);
+      if (callback) {
+        callback();
       }
     });
-  } else if (!body.hasOwnProperty("name") || body.name.length === 0 || body.name === ""){
-    return res.status(400).send("No 'name' property found in JSON request.");
-  }
-  if (!idFound) {
-    res.sendStatus(404);
-  }
-});
+  });
+};
 
-// Route that returns json object of items owned by specified user. Currently not wired up to front end.
-app.get('/user/:username', function(req, res) {
-  var username = req.params.username.toLowerCase();
-  var userItems = [];
-  var userFound = false;
-  // Look for items owned by user, push to userItems
-  storage.items.forEach(function(item, index) {
-    if (item.owner.toLowerCase() === username) {
-      userItems.push(item);
-      userFound = true;
+// runSerber can either be run from the commandline
+// OR as a module
+if (require.main === module) {
+  runServer(function(err) {
+    if (err) {
+      console.error(err);
     }
   });
-  if (!userFound) {
-    res.status(404).send("User " + username + " not found.");
-  }
-  if (userFound) {
-    res.json(userItems);
-  }
-});
-
-app.listen(process.env.PORT || 8080, process.env.IP);
+}
 
 exports.app = app;
-exports.storage = storage;
+exports.runServer = runServer;
