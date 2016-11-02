@@ -35,6 +35,31 @@ app.post('/items', function(req, res) {
   });
 });
 
+app.put('/items/:id', function(req, res) {
+  let id = req.params.id;
+  let newName = req.body.name;
+
+  if (id === 'undefined') res.status(400).send('Bad request, invalid ID');
+  if (newName === 'undefined' || newName === null) res.status(400).send('Bad request, no name given'); //This isn't working yet
+
+  let query = {
+    _id: id
+  };
+
+  let update = {
+    $set: {
+      name: newName
+    }
+  }
+
+  Item.findOneAndUpdate(query, update, function(err, result) {
+    console.log(result.name);
+    res.status(200).json({
+      message: 'Received ' + newName
+    });
+  });
+});
+
 app.use('*', function(req, res) {
   res.status(404).json({
     message: 'Not found'
