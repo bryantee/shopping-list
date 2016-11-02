@@ -60,6 +60,23 @@ app.put('/items/:id', function(req, res) {
   });
 });
 
+app.delete('/items/:id', function(req, res) {
+  let id = req.params.id;
+
+  let query = {
+    _id: id
+  };
+
+  Item.findOneAndRemove(query, function(err, result) {
+    if (!result || err) {
+      console.error('Error:', err);
+      return res.status(404).send('Bad Request');
+    } else {
+      res.status(200).json(result);
+    }
+  });
+});
+
 app.use('*', function(req, res) {
   res.status(404).json({
     message: 'Not found'
