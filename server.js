@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+// config for database url and port parameters
 const config = require('./config');
 
 const app = express();
@@ -9,8 +10,12 @@ const app = express();
 app.use((bodyParser.json()));
 app.use(express.static('public'));
 
+// model / schema for shopping list item
 const Item = require('./models/item');
 
+// GET endpoint consumed by jquery during initial page load
+// and each create / read / update / delete
+// Returns all shoppping list items in db on call
 app.get('/items', function(req, res) {
   Item.find(function(err, items) {
     if (err) {
@@ -22,6 +27,9 @@ app.get('/items', function(req, res) {
   });
 });
 
+// POST endpoint for creating a specific item
+// Takes JSON object with "name" property
+// MongoDB handles id creation
 app.post('/items', function(req, res) {
   Item.create({
     name: req.body.name
@@ -35,6 +43,8 @@ app.post('/items', function(req, res) {
   });
 });
 
+// PUT endpoint for updating item
+// Takes valid id in url param and JSON object with new name as "name" property
 app.put('/items/:id', function(req, res) {
   let id = req.params.id;
   let newName = req.body.name;
@@ -65,6 +75,10 @@ app.put('/items/:id', function(req, res) {
   });
 });
 
+
+// DELETE endpoint to delete item in db
+// Takes valid item id
+// returns JSON of item deleted
 app.delete('/items/:id', function(req, res) {
   let id = req.params.id;
 
@@ -85,12 +99,14 @@ app.delete('/items/:id', function(req, res) {
   });
 });
 
+// Route for any invalid endpoint attempts
 app.use('*', function(req, res) {
   res.status(404).json({
     message: 'Not found'
   });
 });
 
+// Start up the server, uses params from config file
 const runServer = function(callback) {
   mongoose.connect(config.DATABASE_URL, function(err) {
     if (err && callback) {
@@ -105,6 +121,8 @@ const runServer = function(callback) {
   });
 };
 
+// runSerber can either be run from the commandline
+// OR as a module
 if (require.main === module) {
   runServer(function(err) {
     if (err) {
