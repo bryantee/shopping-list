@@ -39,9 +39,6 @@ app.put('/items/:id', function(req, res) {
   let id = req.params.id;
   let newName = req.body.name;
 
-  if (id === 'undefined') res.status(400).send('Bad request, invalid ID');
-  if (newName === 'undefined' || newName === null) res.status(400).send('Bad request, no name given'); //This isn't working yet
-
   let query = {
     _id: id
   };
@@ -53,6 +50,14 @@ app.put('/items/:id', function(req, res) {
   }
 
   Item.findOneAndUpdate(query, update, function(err, result) {
+    console.log(result);
+    if (!result) {
+      console.log('Bad id:', id);
+      return res.status(400).send('Bad id: ' + id);
+    } else if (err) {
+      console.log('Error:', err);
+      return res.status(500).send('Error: ' + err);
+    }
     console.log(result.name);
     res.status(200).json({
       message: 'Received ' + newName
@@ -68,9 +73,12 @@ app.delete('/items/:id', function(req, res) {
   };
 
   Item.findOneAndRemove(query, function(err, result) {
-    if (!result || err) {
-      console.error('Error:', err);
-      return res.status(404).send('Bad Request');
+    if (!result) {
+      console.log('Bad id:', id);
+      return res.status(400).send('Bad id: ' + id);
+    } else if (err) {
+      console.log('Error:', err);
+      return res.status(500).send('Error: ' + err);
     } else {
       res.status(200).json(result);
     }
