@@ -50,6 +50,8 @@ app.put('/items/:id', function(req, res) {
   let id = req.params.id;
   let newName = req.body.name;
 
+  if (id !== req.body._id) return res.sendStatus(400); // id in req object doesn't match url params id
+
   let query = {
     _id: id
   };

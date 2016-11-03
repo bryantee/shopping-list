@@ -128,27 +128,29 @@ describe('Shopping List', function () {
         done();
       });
   });
-  // it('should get 400 when not valid json data on post', function(done) {
-  //   chai.request(app)
-  //     .post('/items')
-  //     .send('blah blah blah')
-  //     .end(function(err, res) {
-  //       res.should.have.status(400);
-  //       done();
-  //     });
-  // });
-  // it('should get 404 when different id in endpoint than body on put', function(done) {
-  //   chai.request(app)
-  //     .put('/items/3')
-  //     .send({'name': 'Hand Sanitizer', 'id': 2, 'owner': 'Jesse'})
-  //     .end(function(err, res) {
-  //       res.should.have.status(400);
-  //       storage.items[1].name.should.equal('Tomatoes');
-  //       storage.items[2].name.should.not.equal('Hand Sanitizer');
-  //       storage.items[1].name.should.not.equal('Hand Sanitizer');
-  //       done();
-  //     });
-  // });
+  it('should get 400 when not valid json data on post', function(done) {
+    chai.request(app)
+      .post('/items')
+      .send('blah blah blah')
+      .end(function(err, res) {
+        res.should.have.status(400);
+        done();
+      });
+  });
+  it('should get 404 when different id in endpoint than body on put', function(done) {
+    chai.request(app)
+      .get('/items')
+        .end(function(err, res) {
+          const id = res.body[2]._id;
+          chai.request(app)
+            .put('/items/' + id)
+            .send({'name': 'Hand Sanitizer', 'id': id})
+            .end(function(err, res) {
+              res.should.have.status(400);
+              done();
+          });
+        });
+  });
   // it('should get 400 when no body data on put', function(done) {
   //   chai.request(app)
   //     .put('/items/3')
