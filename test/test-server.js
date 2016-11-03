@@ -112,25 +112,22 @@ describe('Shopping List', function () {
   // it('should get "already exists" when id already exists on POST', function(done) {
   //   chai.request(app)
   //     .post('/items')
-  //     .send({'name': 'Carrots', 'id': 2, 'username': 'Bryan'})
+  //     .send({'name': 'Carrots'})
   //     .end(function(err, res) {
   //       res.should.have.status(409);
   //       res.should.not.have.status(401);
-  //       storage.items[1].name.should.equal('Tomatoes');
-  //       storage.items[1].name.should.not.equal('Carrots')
   //       done();
   //     });
   // });
-  // it('should get 400 when no data on post', function(done) {
-  //   chai.request(app)
-  //     .post('/items')
-  //     .send({})
-  //     .end(function(err, res) {
-  //       res.should.have.status(400);
-  //       storage.items.length.should.equal(4);
-  //       done();
-  //     });
-  // });
+  it('should get 400 when no data on post', function(done) {
+    chai.request(app)
+      .post('/items')
+      .send({})
+      .end(function(err, res) {
+        res.should.have.status(400);
+        done();
+      });
+  });
   // it('should get 400 when not valid json data on post', function(done) {
   //   chai.request(app)
   //     .post('/items')

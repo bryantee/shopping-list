@@ -35,6 +35,7 @@ app.post('/items', function(req, res) {
     name: req.body.name
   }, function(err, item) {
     if (err) {
+      if (err.errors.name.message == "Path `name` is required.") return res.sendStatus(400);
       return res.status(500).json({
         message: 'Internal Server Error'
       });
