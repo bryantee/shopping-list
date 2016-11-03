@@ -69,9 +69,7 @@ app.put('/items/:id', function(req, res) {
       return res.status(500).send('Error: ' + err);
     }
     console.log(result.name);
-    res.status(200).json({
-      message: 'Received ' + newName
-    });
+    res.sendStatus(200);
   });
 });
 
