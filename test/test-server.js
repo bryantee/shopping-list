@@ -48,32 +48,30 @@ describe('Shopping List', function () {
         done();
       });
   });
-  // it('should add an item on post', function(done) {
-  //   chai.request(app)
-  //     .post('/items')
-  //     .send({'name': 'Kale', 'username': 'Thomas'})
-  //     .end(function(err, res) {
-  //       should.equal(err, null);
-  //       res.should.have.status(201);
-  //       res.should.be.json;
-  //       res.body.should.be.a('object');
-  //       res.body.should.have.property('name', 'Kale');
-  //       res.body.should.have.property('id', 5);
-  //       res.body.should.have.property('owner', 'Thomas');
-  //       res.body.id.should.be.a('number');
-  //       res.body.name.should.be.a('string');
-  //       res.body.owner.should.be.a('string');
-  //       storage.items[4].should.have.property('name', 'Kale');
-  //       storage.items[4].should.have.property('id', 5);
-  //       storage.items[4].should.have.property('owner', 'Thomas');
-  //       storage.items[4].should.be.a('object');
-  //       storage.items[4].id.should.be.a('number');
-  //       storage.items[4].name.should.be.a('string');
-  //       storage.items[4].owner.should.be.a('string');
-  //       storage.items.should.have.length(5);
-  //       done();
-  //     });
-  // });
+  it('should add an item on post', function(done) {
+    chai.request(app)
+      .post('/items')
+      .send({'name': 'Kale'})
+      .end(function(err, res) {
+        should.equal(err, null);
+        res.should.have.status(201);
+        res.should.be.json;
+        res.body.should.be.a('object');
+        res.body.should.have.property('name', 'Kale');
+        res.body.should.have.property('_id');
+        res.body._id.should.be.a('string');
+        res.body.name.should.be.a('string');
+        chai.request(app)
+          .get('/items')
+          .end(function(err, res) {
+            res.body.should.be.a('array');
+            res.body.length.should.equal(4);
+            res.body[3].name.should.equal('Kale');
+            res.body[3]._id.should.be.a('string');
+            done();
+          });
+      });
+  });
   it('should edit an item on put', function(done) {
     chai.request(app)
       .get('/items')
@@ -94,21 +92,23 @@ describe('Shopping List', function () {
           });
       });
   });
-  // it('should delete an item on delete', function(done) {
-  //   chai.request(app)
-  //     .delete('/items/3')
-  //     .end(function(err, res) {
-  //       res.should.have.status(200);
-  //       res.should.be.json;
-  //       res.body.should.have.property('name', 'Ghost Pepper Extract');
-  //       res.body.should.have.property('id', 3);
-  //       res.body.should.have.property('owner', 'Jesse');
-  //       storage.items[2].name.should.not.equal('Ghost Pepper Extract');
-  //       storage.items[2].id.should.not.equal(3);
-  //       storage.items.length.should.equal(4);
-  //       done();
-  //     });
-  // });
+  it('should delete an item on delete', function (done) {
+    chai.request(app)
+      .get('/items')
+      .end(function (err, res) {
+        const id = res.body[3]._id;
+        res.body[3].name.should.equal('Kale');
+        chai.request(app)
+          .delete('/items/' + id)
+          .end(function (err, res) {
+            res.should.have.status(200);
+            res.should.be.json;
+            res.body.should.have.property('name', 'Kale');
+            res.body.should.have.property('_id', id);
+            done();
+          });
+      });
+  });
   // it('should get "already exists" when id already exists on POST', function(done) {
   //   chai.request(app)
   //     .post('/items')
