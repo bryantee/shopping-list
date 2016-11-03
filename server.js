@@ -50,7 +50,7 @@ app.put('/items/:id', function(req, res) {
   let id = req.params.id;
   let newName = req.body.name;
 
-  if (id !== req.body._id) return res.sendStatus(400); // id in req object doesn't match url params id
+  if (id != req.body._id) return res.sendStatus(400); // id in req object doesn't match url params id
 
   let query = {
     _id: id
@@ -64,7 +64,7 @@ app.put('/items/:id', function(req, res) {
 
   Item.findOneAndUpdate(query, update, function(err, result) {
     if (!result) {
-      return res.status(400).send('Bad id: ' + id);
+      return res.status(404).send('Bad id: ' + id);
     } else if (err) {
       return res.status(500).send('Error: ' + err);
     }

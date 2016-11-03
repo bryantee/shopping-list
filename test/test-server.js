@@ -144,7 +144,7 @@ describe('Shopping List', function () {
           const id = res.body[2]._id;
           chai.request(app)
             .put('/items/' + id)
-            .send({'name': 'Hand Sanitizer', 'id': id})
+            .send({'name': 'Hand Sanitizer', '_id': 42})
             .end(function(err, res) {
               res.should.have.status(400);
               done();
@@ -159,15 +159,17 @@ describe('Shopping List', function () {
         done();
       });
   });
-  // it('should get 400 when no id in endoint on delete', function(done) {
-  //   chai.request(app)
-  //     .delete('/items/')
-  //     .end(function(err, res) {
-  //       res.should.have.status(404);
-  //       storage.items.length.should.equal(4);
-  //       done();
-  //     });
-  // });
+  it('should get 400 when no id in endoint on delete', function(done) {
+    chai.request(app)
+      .delete('/items/')
+      .end(function(err, res) {
+        res.should.have.status(404);
+        done();
+      });
+  });
+
+  // TODO: Add tests for users once API / functionality added
+  // ----------------------------------------------------------
   // it('should return items for user', function(done) {
   //   chai.request(app)
   //     .get('/user/bryan')
@@ -186,16 +188,17 @@ describe('Shopping List', function () {
   //       done();
   //     });
   // });
-  // it('should return 404 when id doesn\'t exist on PUT', function(done) {
-  //   chai.request(app)
-  //     .put('/items/29')
-  //     .send({'name': 'Berries', 'id': 29, 'owner': 'Bryan'})
-  //     .end(function(err, res) {
-  //       res.should.have.status(404);
-  //       storage.items.length.should.equal(4);
-  //       done();
-  //     });
-  // });
+  //  ---------------------- END USER TESTS ----------------------
+  it('should return 404 when id doesn\'t exist on PUT', function(done) {
+    chai.request(app)
+      .put('/items/29')
+      .send({'name': 'Berries', '_id': 29})
+      .end(function(err, res) {
+        res.should.have.status(404);
+        // storage.items.length.should.equal(4);
+        done();
+      });
+  });
   // it('should return 400 when no name supplied on PUT', function(done) {
   //   chai.request(app)
   //     .put('/items/3')
