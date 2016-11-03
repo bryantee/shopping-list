@@ -85,10 +85,8 @@ app.delete('/items/:id', function(req, res) {
 
   Item.findOneAndRemove(query, function(err, result) {
     if (!result) {
-      console.log('Bad id:', id);
-      return res.status(400).send('Bad id: ' + id);
+      return res.status(404).send('Bad id: ' + id);
     } else if (err) {
-      console.log('Error:', err);
       return res.status(500).send('Error: ' + err);
     } else {
       res.status(200).json(result);

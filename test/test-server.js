@@ -151,25 +151,14 @@ describe('Shopping List', function () {
           });
         });
   });
-  // it('should get 400 when no body data on put', function(done) {
-  //   chai.request(app)
-  //     .put('/items/3')
-  //     .send({})
-  //     .end(function(err, res) {
-  //       res.should.have.status(400);
-  //       storage.items.length.should.equal(4);
-  //       storage.items[2].name.should.equal('Bananas')
-  //       done();
-  //     });
-  // });
-  // it('should get 404 when id doesn\'t exist on delete', function(done) {
-  //   chai.request(app)
-  //     .delete('/items/26')
-  //     .end(function(err, res) {
-  //       res.should.have.status(404);
-  //       done();
-  //     });
-  // });
+  it('should get 404 when id doesn\'t exist on delete', function(done) {
+    chai.request(app)
+      .delete('/items/26')
+      .end(function(err, res) {
+        res.should.have.status(404);
+        done();
+      });
+  });
   // it('should get 400 when no id in endoint on delete', function(done) {
   //   chai.request(app)
   //     .delete('/items/')
