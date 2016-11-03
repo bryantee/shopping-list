@@ -60,15 +60,11 @@ app.put('/items/:id', function(req, res) {
   }
 
   Item.findOneAndUpdate(query, update, function(err, result) {
-    console.log(result);
     if (!result) {
-      console.log('Bad id:', id);
       return res.status(400).send('Bad id: ' + id);
     } else if (err) {
-      console.log('Error:', err);
       return res.status(500).send('Error: ' + err);
     }
-    console.log(result.name);
     res.sendStatus(200);
   });
 });
