@@ -109,16 +109,6 @@ describe('Shopping List', function () {
           });
       });
   });
-  // it('should get "already exists" when id already exists on POST', function(done) {
-  //   chai.request(app)
-  //     .post('/items')
-  //     .send({'name': 'Carrots'})
-  //     .end(function(err, res) {
-  //       res.should.have.status(409);
-  //       res.should.not.have.status(401);
-  //       done();
-  //     });
-  // });
   it('should get 400 when no data on post', function(done) {
     chai.request(app)
       .post('/items')
@@ -195,29 +185,7 @@ describe('Shopping List', function () {
       .send({'name': 'Berries', '_id': 29})
       .end(function(err, res) {
         res.should.have.status(404);
-        // storage.items.length.should.equal(4);
         done();
       });
   });
-  // it('should return 400 when no name supplied on PUT', function(done) {
-  //   chai.request(app)
-  //     .put('/items/3')
-  //     .send({'id': 3, 'owner': 'Bryan'})
-  //     .end(function(err, res) {
-  //       res.should.have.status(400);
-  //       storage.items.length.should.equal(4);
-  //       done();
-  //     });
-  // });
-  // it('should return 400 when invalid id supplied on delete in parameter', function(done) {
-  //   chai.request(app)
-  //     .delete('/items/LLKoolJ')
-  //     .send({'name': 'Gangster\'s Paradise', 'id': 4, 'owner': 'Thomas'})
-  //     .end(function(err, res) {
-  //       res.should.have.status(400);
-  //       storage.items[3].name.should.be.equal('Kale');
-  //       storage.items.length.should.be.equal(4);
-  //       done();
-  //     });
-  // });
 });
