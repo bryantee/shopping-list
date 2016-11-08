@@ -37,6 +37,7 @@ app.post('/items', function(req, res) {
     name: req.body.name
   }, function(err, item) {
     if (err) {
+      if (err.errors.name.message == "Path `name` is required.") return res.sendStatus(400);
       return res.status(500).json({
         message: 'Internal Server Error'
       });
@@ -51,6 +52,8 @@ app.put('/items/:id', function(req, res) {
   let id = req.params.id;
   let newName = req.body.name;
 
+  if (id != req.body._id) return res.sendStatus(400); // id in req object doesn't match url params id
+
   let query = {
     _id: id
   };
@@ -62,18 +65,12 @@ app.put('/items/:id', function(req, res) {
   }
 
   Item.findOneAndUpdate(query, update, function(err, result) {
-    console.log(result);
     if (!result) {
-      console.log('Bad id:', id);
-      return res.status(400).send('Bad id: ' + id);
+      return res.status(404).send('Bad id: ' + id);
     } else if (err) {
-      console.log('Error:', err);
       return res.status(500).send('Error: ' + err);
     }
-    console.log(result.name);
-    res.status(200).json({
-      message: 'Received ' + newName
-    });
+    res.sendStatus(200);
   });
 });
 
@@ -90,10 +87,8 @@ app.delete('/items/:id', function(req, res) {
 
   Item.findOneAndRemove(query, function(err, result) {
     if (!result) {
-      console.log('Bad id:', id);
-      return res.status(400).send('Bad id: ' + id);
+      return res.status(404).send('Bad id: ' + id);
     } else if (err) {
-      console.log('Error:', err);
       return res.status(500).send('Error: ' + err);
     } else {
       res.status(200).json(result);
